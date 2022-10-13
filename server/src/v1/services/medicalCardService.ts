@@ -24,14 +24,8 @@ export async function postMedicalCard(data: MedicalCard) {
 export async function getMedicalCard(id: number, userId: number) {
   const medicalCard = await prisma.medicalCard.findFirst({
     where: {
-      AND: [
-        {
-          id: id,
-        },
-        {
-          userId: userId,
-        },
-      ],
+      id: id,
+      userId: userId,
     },
   });
   return medicalCard;

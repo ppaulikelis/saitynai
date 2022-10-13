@@ -21,20 +21,18 @@ export async function getAll(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export async function postOne(req: Request, res: Response, next: NextFunction) {
+export async function post(req: Request, res: Response, next: NextFunction) {
   try {
-    const data = req.body;
-    const medicalCard = await postMedicalCard({ ...data, userId: 1 }); //TODO: pass user id instead of 1
+    const medicalCard = await postMedicalCard({ ...req.body, userId: 1 }); //TODO: pass user id instead of 1
     res.status(201).json(medicalCard);
   } catch (error: any) {
     next(error);
   }
 }
 
-export async function getOne(req: Request, res: Response, next: NextFunction) {
+export async function get(req: Request, res: Response, next: NextFunction) {
   try {
-    const { medicalCardId } = req.params;
-    const medicalCard = await getMedicalCard(Number(medicalCardId), 1); //TODO: pass user id instead of 1
+    const medicalCard = await getMedicalCard(Number(req.params.medicalCardId), 1); //TODO: pass user id instead of 1
     if (medicalCard == null) {
       next(resourceNotFound);
     } else {
@@ -45,22 +43,19 @@ export async function getOne(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export async function updateOne(req: Request, res: Response, next: NextFunction) {
+export async function update(req: Request, res: Response, next: NextFunction) {
   try {
-    const { medicalCardId } = req.params;
-    const data = req.body;
-    const medicalCard = await updateMedicalCard(Number(medicalCardId), data);
+    const medicalCard = await updateMedicalCard(Number(req.params.medicalCardId), req.body);
     res.status(200).json(medicalCard);
   } catch (error: any) {
     next(error);
   }
 }
 
-export async function deleteOne(req: Request, res: Response, next: NextFunction) {
+export async function remove(req: Request, res: Response, next: NextFunction) {
   try {
-    const { medicalCardId } = req.params;
-    await deleteMedicalCard(Number(medicalCardId));
-    res.status(204).json();
+    await deleteMedicalCard(Number(req.params.medicalCardId));
+    res.status(200).json();
   } catch (error: any) {
     next(error);
   }
