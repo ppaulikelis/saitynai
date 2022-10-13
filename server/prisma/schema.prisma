@@ -6,3 +6,71 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  password     String
+  role         Role          @default(USER)
+  medicalCards MedicalCard[]
+  posts        Post[]
+}
+
+model MedicalCard {
+  id         Int         @id @default(autoincrement())
+  name       String
+  surname    String?
+  genderId   Int
+  birthDate  DateTime    @db.Date
+  userId     Int
+  bloodTests BloodTest[]
+  gender     Gender      @relation(fields: [genderId], references: [id])
+  user       User        @relation(fields: [userId], references: [id])
+}
+
+model Gender {
+  id           Int           @id @default(autoincrement())
+  name         String
+  medicalCards MedicalCard[]
+}
+
+model BloodTest {
+  id                Int                @id @default(autoincrement())
+  date              DateTime           @default(now()) @db.Date
+  medicalCardId     Int
+  medicalCard       MedicalCard        @relation(fields: [medicalCardId], references: [id])
+  bloodTestAnalytes BloodTestAnalyte[]
+}
+
+model BloodTestAnalyte {
+  id                            Int                         @id @default(autoincrement())
+  value                         Decimal
+  bloodTestId                   Int
+  bloodTestAnalyteDescriptionId Int
+  bloodTest                     BloodTest                   @relation(fields: [bloodTestId], references: [id])
+  bloodTestAnalyteDescription   BloodTestAnalyteDescription @relation(fields: [bloodTestAnalyteDescriptionId], references: [id])
+}
+
+model BloodTestAnalyteDescription {
+  id                Int                @id @default(autoincrement())
+  name              String
+  abbreviation      String?
+  unit              String
+  bloodTestAnalytes BloodTestAnalyte[]
+}
+
+enum Role {
+  USER
+  ADMIN
+  EDITOR
+}
+
+model Post {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  date        DateTime @default(now()) @db.Date
+  content     String
+  editorId    Int
+  User        User     @relation(fields: [editorId], references: [id])
+}
