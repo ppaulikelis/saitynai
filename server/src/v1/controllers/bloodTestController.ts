@@ -60,7 +60,7 @@ export async function update(req: Request, res: Response, next: NextFunction) {
 export async function remove(req: Request, res: Response, next: NextFunction) {
   try {
     await deleteBloodTest(Number(req.params.bloodTestId));
-    res.status(200).json();
+    res.status(204).json();
   } catch (error: any) {
     next(error);
   }
