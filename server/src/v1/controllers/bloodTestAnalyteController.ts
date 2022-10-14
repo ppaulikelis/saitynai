@@ -1,25 +1,26 @@
 import { NextFunction, Request, Response } from 'express';
 import { resourcesNotFound, resourceNotFound } from '../models/entities/customError';
 import {
-  deleteBloodTest,
-  getBloodTest,
-  getBloodTests,
-  postBloodTest,
-  updateBloodTest,
-} from '../services/bloodTestService';
+  deleteBloodTestAnalyte,
+  getBloodTestAnalyte,
+  getBloodTestAnalytes,
+  postBloodTestAnalyte,
+  updateBloodTestAnalyte,
+} from '../services/bloodTestAnalyteService';
 
 export async function getAll(req: Request, res: Response, next: NextFunction) {
   try {
-    const bloodTests = await getBloodTests(
+    const bloodTestAnalytes = await getBloodTestAnalytes(
       Number(req.query.page),
       Number(req.query.count),
+      Number(req.params.bloodTestId),
       Number(req.params.medicalCardId),
       1
     ); //TODO: pass user id instead of 1
-    if (bloodTests.length == 0) {
+    if (bloodTestAnalytes.length == 0) {
       next(resourcesNotFound);
     } else {
-      res.status(200).json(bloodTests);
+      res.status(200).json(bloodTestAnalytes);
     }
   } catch (error: any) {
     next(error);
@@ -28,8 +29,8 @@ export async function getAll(req: Request, res: Response, next: NextFunction) {
 
 export async function post(req: Request, res: Response, next: NextFunction) {
   try {
-    const bloodTest = await postBloodTest({ ...req.body, medicalCardId: Number(req.params.medicalCardId) });
-    res.status(201).json(bloodTest);
+    const bloodTestAnalyte = await postBloodTestAnalyte({ ...req.body, bloodTestId: Number(req.params.bloodTestId) });
+    res.status(201).json(bloodTestAnalyte);
   } catch (error: any) {
     next(error);
   }
@@ -37,11 +38,16 @@ export async function post(req: Request, res: Response, next: NextFunction) {
 
 export async function get(req: Request, res: Response, next: NextFunction) {
   try {
-    const bloodTest = await getBloodTest(Number(req.params.bloodTestId), Number(req.params.medicalCardId), 1); //TODO: pass user id instead of 1
-    if (bloodTest == null) {
+    const bloodTestAnalyte = await getBloodTestAnalyte(
+      Number(req.params.bloodTestAnalyteId),
+      Number(req.params.bloodTestId),
+      Number(req.params.medicalCardId),
+      1
+    ); //TODO: pass user id instead of 1
+    if (bloodTestAnalyte == null) {
       next(resourceNotFound);
     } else {
-      res.status(200).json(bloodTest);
+      res.status(200).json(bloodTestAnalyte);
     }
   } catch (error: any) {
     next(error);
@@ -50,8 +56,8 @@ export async function get(req: Request, res: Response, next: NextFunction) {
 
 export async function update(req: Request, res: Response, next: NextFunction) {
   try {
-    const bloodTest = await updateBloodTest(Number(req.params.bloodTestId), req.body);
-    res.status(200).json(bloodTest);
+    const bloodTestAnalyte = await updateBloodTestAnalyte(Number(req.params.bloodTestAnalyteId), req.body);
+    res.status(200).json(bloodTestAnalyte);
   } catch (error: any) {
     next(error);
   }
@@ -59,7 +65,7 @@ export async function update(req: Request, res: Response, next: NextFunction) {
 
 export async function remove(req: Request, res: Response, next: NextFunction) {
   try {
-    await deleteBloodTest(Number(req.params.bloodTestId));
+    await deleteBloodTestAnalyte(Number(req.params.bloodTestAnalyteId));
     res.status(204).json();
   } catch (error: any) {
     next(error);

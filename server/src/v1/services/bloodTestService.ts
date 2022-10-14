@@ -37,7 +37,7 @@ export async function getBloodTest(id: number, medicalCardId: number, userId: nu
   return bloodTest;
 }
 
-export async function updateBloodTest(id: number, data: MedicalCard) {
+export async function updateBloodTest(id: number, data: BloodTest) {
   const bloodTest = await prisma.bloodTest.update({
     where: {
       id: id,

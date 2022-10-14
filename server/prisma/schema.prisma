@@ -44,7 +44,7 @@ model BloodTest {
 
 model BloodTestAnalyte {
   id                            Int                         @id @default(autoincrement())
-  value                         Decimal
+  value                         Float
   bloodTestId                   Int
   bloodTestAnalyteDescriptionId Int
   bloodTest                     BloodTest                   @relation(fields: [bloodTestId], references: [id])
