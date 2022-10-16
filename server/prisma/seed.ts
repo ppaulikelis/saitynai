@@ -13,13 +13,13 @@ class Seed {
   main = async () => {
     try {
       //delete data
-      await prisma.gender.deleteMany();
-      await prisma.bloodTestAnalyteDescription.deleteMany();
-      await prisma.user.deleteMany();
+      await prisma.bloodTestAnalyte.deleteMany();
+      await prisma.bloodTest.deleteMany();
       await prisma.medicalCard.deleteMany();
       await prisma.post.deleteMany();
-      await prisma.bloodTest.deleteMany();
-      await prisma.bloodTestAnalyte.deleteMany();
+      await prisma.user.deleteMany();
+      await prisma.gender.deleteMany();
+      await prisma.bloodTestAnalyteDescription.deleteMany();
       //add data
       await this.addGenders();
       await this.addBloodTestAnalyteDescriptions();

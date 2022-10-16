@@ -50,6 +50,8 @@ model BloodTestAnalyte {
   bloodTestAnalyteDescriptionId Int
   bloodTest                     BloodTest                   @relation(fields: [bloodTestId], references: [id])
   bloodTestAnalyteDescription   BloodTestAnalyteDescription @relation(fields: [bloodTestAnalyteDescriptionId], references: [id])
+
+  @@unique([bloodTestId, bloodTestAnalyteDescriptionId])
 }
 
 model BloodTestAnalyteDescription {

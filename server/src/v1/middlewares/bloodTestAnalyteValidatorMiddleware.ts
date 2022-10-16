@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
-import { join } from 'path';
 import { invalidData } from '../models/entities/customError';
 
 const prisma = new PrismaClient();
