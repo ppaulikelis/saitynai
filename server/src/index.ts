@@ -7,6 +7,8 @@ import { errorLogger, errorResponder, invalidPath } from './v1/middlewares/custo
 import { prismaErrorHandler } from './v1/middlewares/prismaErrorMiddleware';
 import { router as bloodTestRouterV1 } from './v1/routes/bloodTestRouter';
 import { router as bloodTestAnalyteRouterV1 } from './v1/routes/bloodTestAnalyteRouter';
+import { router as genderRouterV1 } from './v1/routes/genderRouter';
+import { router as bloodTestAnalyteDescriptionRouterV1 } from './v1/routes/btaDescriptionRouter';
 
 const app = express();
 
@@ -19,6 +21,8 @@ const prefixV1 = '/api/v1';
 app.use(prefixV1, medicalCardRouterV1);
 app.use(prefixV1, bloodTestRouterV1);
 app.use(prefixV1, bloodTestAnalyteRouterV1);
+app.use(prefixV1, genderRouterV1);
+app.use(prefixV1, bloodTestAnalyteDescriptionRouterV1);
 
 //Error Middleware
 app.use('*', invalidPath);
