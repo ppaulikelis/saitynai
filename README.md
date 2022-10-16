@@ -11,26 +11,29 @@ Projekto tikslas – padėti žmogui sekti savo ir artimųjų sveikatą, remiant
 Neregistruotas sistemos vartotojas galės:
 
 - Peržiūrėti platformos reprezentacinį puslapį;
+- Peržiūrėti straipsnius;
 - Prisiregistruoti prie internetinės aplikacijos.
 
 Registruotas sistemos vartotojas galės:
 
-- Prisijungti prie platformos;
-- Atsijungti nuo internetinės aplikacijos;
-- Pridėti sveikatos kortelę;
-- Priskirti kraujo tyrimą sveikatos kortelei;
-- Priskirti kraujo tyrimui analitę.
+- Sveikatos kortelės CRUD;
+- Kraujo tyrimo CRUD;
+- Kraujo tyrimo analitės CRUD.
 
 Administratorius galės:
 
-- Pašalinti vartotojo paskyrą.
+- Pašalinti vartotojo paskyrą;
+- Redaktoriaus CRUD.
+
+Redaktorius galės:
+
+- Straipsnių CRUD.
 
 # Pasirinktų technologijų aprašymas
 
 - Kliento pusė (angl. Front-End) – SvelteKit karkasas;
 - Serverio pusė (angl. Back-End) – Express.js karkasas;
 - Duomenų bazė – MySQL;
-- Stilius - Tailwind CSS karkasas;
 - ORM - Prisma ORM.
 
 # Sistemos architektūra
