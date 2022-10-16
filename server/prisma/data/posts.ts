@@ -5,6 +5,7 @@ export const posts = [
     date: '2000-01-01T00:00:00.000Z',
     content: 'content1',
     editorId: 3,
+    lastEditorId: 3,
   },
   {
     title: 'title2',
@@ -12,6 +13,7 @@ export const posts = [
     date: '2000-01-01T00:00:00.000Z',
     content: 'content2',
     editorId: 3,
+    lastEditorId: 3,
   },
   {
     title: 'title3',
@@ -19,6 +21,7 @@ export const posts = [
     date: '2000-01-01T00:00:00.000Z',
     content: 'content3',
     editorId: 3,
+    lastEditorId: 3,
   },
   {
     title: 'title4',
@@ -26,6 +29,7 @@ export const posts = [
     date: '2000-01-01T00:00:00.000Z',
     content: 'content4',
     editorId: 3,
+    lastEditorId: 3,
   },
   {
     title: 'title5',
@@ -33,5 +37,6 @@ export const posts = [
     date: '2000-01-01T00:00:00.000Z',
     content: 'content5',
     editorId: 4,
+    lastEditorId: 3,
   },
 ];

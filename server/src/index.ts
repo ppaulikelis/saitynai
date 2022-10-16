@@ -9,6 +9,7 @@ import { router as bloodTestRouterV1 } from './v1/routes/bloodTestRouter';
 import { router as bloodTestAnalyteRouterV1 } from './v1/routes/bloodTestAnalyteRouter';
 import { router as genderRouterV1 } from './v1/routes/genderRouter';
 import { router as bloodTestAnalyteDescriptionRouterV1 } from './v1/routes/btaDescriptionRouter';
+import { router as postRouterV1 } from './v1/routes/postRouter';
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(prefixV1, bloodTestRouterV1);
 app.use(prefixV1, bloodTestAnalyteRouterV1);
 app.use(prefixV1, genderRouterV1);
 app.use(prefixV1, bloodTestAnalyteDescriptionRouterV1);
+app.use(prefixV1, postRouterV1);
 
 //Error Middleware
 app.use('*', invalidPath);

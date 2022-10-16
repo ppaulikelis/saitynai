@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique
-  password     String
-  role         Role          @default(USER)
-  medicalCards MedicalCard[]
-  posts        Post[]
+  id              Int           @id @default(autoincrement())
+  email           String        @unique
+  password        String
+  role            Role          @default(USER)
+  medicalCards    MedicalCard[]
+  posts           Post[]        @relation("Posts")
+  lastEditedPosts Post[]        @relation("LastEditedPosts")
 }
 
 model MedicalCard {
@@ -66,11 +67,13 @@ enum Role {
 }
 
 model Post {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String
-  date        DateTime @default(now()) @db.Date
-  content     String
-  editorId    Int
-  User        User     @relation(fields: [editorId], references: [id])
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String
+  date         DateTime @default(now()) @db.Date
+  content      String
+  editorId     Int
+  lastEditorId Int
+  editor       User     @relation("Posts", fields: [editorId], references: [id])
+  lastEditor   User     @relation("LastEditedPosts", fields: [lastEditorId], references: [id])
 }

@@ -11,13 +11,26 @@ const prisma = new PrismaClient();
 
 class Seed {
   main = async () => {
-    await this.addGenders();
-    await this.addBloodTestAnalyteDescriptions();
-    await this.addUsers();
-    await this.addMedicalCards();
-    await this.addPosts();
-    await this.addBloodTests();
-    await this.addBloodTestAnalytes();
+    try {
+      //delete data
+      await prisma.gender.deleteMany();
+      await prisma.bloodTestAnalyteDescription.deleteMany();
+      await prisma.user.deleteMany();
+      await prisma.medicalCard.deleteMany();
+      await prisma.post.deleteMany();
+      await prisma.bloodTest.deleteMany();
+      await prisma.bloodTestAnalyte.deleteMany();
+      //add data
+      await this.addGenders();
+      await this.addBloodTestAnalyteDescriptions();
+      await this.addUsers();
+      await this.addMedicalCards();
+      await this.addPosts();
+      await this.addBloodTests();
+      await this.addBloodTestAnalytes();
+    } catch (error: any) {
+      console.log(error);
+    }
   };
 
   addGenders = async () => {

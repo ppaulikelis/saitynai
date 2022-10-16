@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import { remove, getAll, get, post, update } from '../controllers/bloodTestController';
-import { validate } from '../middlewares/bloodTestValidator';
+import { validate } from '../middlewares/bloodTestValidatorMiddleware';
 
 export const router = express.Router();
 
