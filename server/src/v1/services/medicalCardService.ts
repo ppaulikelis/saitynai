@@ -1,9 +1,9 @@
 import { MedicalCard, PrismaClient } from '@prisma/client';
+import { handleListQuery } from '../utils/listQueryHandler';
 const prisma = new PrismaClient();
 
 export async function getMedicalCards(page: number, count: number, userId: number) {
-  const skip = (page - 1) * count;
-  const take = count;
+  const { skip, take } = handleListQuery(page, count);
   const medicalCards = await prisma.medicalCard.findMany({
     where: {
       userId: userId,
