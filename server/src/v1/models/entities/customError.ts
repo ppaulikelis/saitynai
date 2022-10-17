@@ -13,3 +13,4 @@ export const resourcesNotFound = new CustomError('', 404, 'Resources not found')
 export const resourceNotFound = new CustomError('', 404, 'Resource not found');
 export const invalidData = new CustomError('', 400, 'Data is not valid');
 export const invalidRequest = new CustomError('', 400, 'Request is not valid');
+export const duplicateData = new CustomError('', 400, 'Resource already exists');

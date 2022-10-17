@@ -20,13 +20,15 @@ model User {
 model MedicalCard {
   id         Int         @id @default(autoincrement())
   name       String
-  surname    String?
+  surname    String?     @default("")
   genderId   Int
   birthDate  DateTime    @db.Date
   userId     Int
   bloodTests BloodTest[]
   gender     Gender      @relation(fields: [genderId], references: [id])
   user       User        @relation(fields: [userId], references: [id])
+
+  @@unique([name, surname, userId])
 }
 
 model Gender {
@@ -41,6 +43,8 @@ model BloodTest {
   medicalCardId     Int
   medicalCard       MedicalCard        @relation(fields: [medicalCardId], references: [id])
   bloodTestAnalytes BloodTestAnalyte[]
+
+  @@unique([medicalCardId, date])
 }
 
 model BloodTestAnalyte {
@@ -70,7 +74,7 @@ enum Role {
 
 model Post {
   id           Int      @id @default(autoincrement())
-  title        String
+  title        String   @unique
   description  String
   date         DateTime @default(now()) @db.Date
   content      String

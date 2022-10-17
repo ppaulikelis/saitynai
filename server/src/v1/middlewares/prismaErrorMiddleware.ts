@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
-import { resourceNotFound, CustomError, invalidRequest, invalidData } from '../models/entities/customError';
+import { resourceNotFound, CustomError, invalidRequest, duplicateData } from '../models/entities/customError';
 
 export function prismaErrorHandler(error: any, request: Request, response: Response, next: NextFunction) {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -10,7 +10,7 @@ export function prismaErrorHandler(error: any, request: Request, response: Respo
       next(resourceNotFound);
     }
     if (error.code === 'P2002') {
-      next(invalidData);
+      next(duplicateData);
     } else {
       next(new CustomError(error.message));
     }
