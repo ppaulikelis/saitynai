@@ -39,7 +39,11 @@ export async function get(req: Request, res: Response, next: NextFunction) {
 
 export async function update(req: Request, res: Response, next: NextFunction) {
   try {
-    const post = await updatePost(Number(req.params.postId), { ...req.body, lastEditorId: 3 }); //TODO: pass editor id instead of 3
+    const post = await updatePost(Number(req.params.postId), {
+      ...req.body,
+      lastEditedDate: new Date(),
+      lastEditorId: 3,
+    }); //TODO: pass editor id instead of 3
     res.status(200).json(post);
   } catch (error: any) {
     next(error);

@@ -9,8 +9,8 @@ datasource db {
 
 model User {
   id              Int           @id @default(autoincrement())
-  email           String        @unique
-  password        String
+  email           String        @unique @db.VarChar(255)
+  password        String        @db.VarChar(50)
   role            Role          @default(USER)
   medicalCards    MedicalCard[]
   posts           Post[]        @relation("Posts")
@@ -19,14 +19,14 @@ model User {
 
 model MedicalCard {
   id         Int         @id @default(autoincrement())
-  name       String
-  surname    String?     @default("")
+  name       String      @db.VarChar(35)
+  surname    String?     @default("") @db.VarChar(35)
   genderId   Int
   birthDate  DateTime    @db.Date
   userId     Int
   bloodTests BloodTest[]
   gender     Gender      @relation(fields: [genderId], references: [id])
-  user       User        @relation(fields: [userId], references: [id])
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([name, surname, userId])
 }
@@ -41,7 +41,7 @@ model BloodTest {
   id                Int                @id @default(autoincrement())
   date              DateTime           @default(now()) @db.Date
   medicalCardId     Int
-  medicalCard       MedicalCard        @relation(fields: [medicalCardId], references: [id])
+  medicalCard       MedicalCard        @relation(fields: [medicalCardId], references: [id], onDelete: Cascade)
   bloodTestAnalytes BloodTestAnalyte[]
 
   @@unique([medicalCardId, date])
@@ -52,7 +52,7 @@ model BloodTestAnalyte {
   value                         Float
   bloodTestId                   Int
   bloodTestAnalyteDescriptionId Int
-  bloodTest                     BloodTest                   @relation(fields: [bloodTestId], references: [id])
+  bloodTest                     BloodTest                   @relation(fields: [bloodTestId], references: [id], onDelete: Cascade)
   bloodTestAnalyteDescription   BloodTestAnalyteDescription @relation(fields: [bloodTestAnalyteDescriptionId], references: [id])
 
   @@unique([bloodTestId, bloodTestAnalyteDescriptionId])
@@ -60,7 +60,7 @@ model BloodTestAnalyte {
 
 model BloodTestAnalyteDescription {
   id                Int                @id @default(autoincrement())
-  name              String
+  name              String             @db.VarChar(50)
   abbreviation      String?
   unit              String
   bloodTestAnalytes BloodTestAnalyte[]
@@ -73,13 +73,14 @@ enum Role {
 }
 
 model Post {
-  id           Int      @id @default(autoincrement())
-  title        String   @unique
-  description  String
-  date         DateTime @default(now()) @db.Date
-  content      String
-  editorId     Int
-  lastEditorId Int
-  editor       User     @relation("Posts", fields: [editorId], references: [id])
-  lastEditor   User     @relation("LastEditedPosts", fields: [lastEditorId], references: [id])
+  id             Int      @id @default(autoincrement())
+  title          String   @unique @db.VarChar(50)
+  description    String   @db.VarChar(50)
+  date           DateTime @default(now()) @db.Date
+  content        String   @db.VarChar(2000)
+  editorId       Int
+  lastEditorId   Int
+  lastEditedDate DateTime @default(now()) @db.Date
+  editor         User     @relation("Posts", fields: [editorId], references: [id])
+  lastEditor     User     @relation("LastEditedPosts", fields: [lastEditorId], references: [id])
 }
