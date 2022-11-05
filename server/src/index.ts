@@ -36,7 +36,7 @@ app.use(prismaErrorHandler);
 app.use(errorLogger);
 app.use(errorResponder);
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Server is running at localhost:${port}`);
+//const port = 3000;
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running`);
 });
