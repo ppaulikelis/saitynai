@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node ./src/index.ts",
+    "start": "node dist/src/index.js",
     "start:prod": "npm run build && node ./dist/src/index.js",
     "build": "npx tsc",
-    "start:nodemon": "node ./node_modules/nodemon/bin/nodemon.js"
+    "start:nodemon": "node ./node_modules/nodemon/bin/nodemon.js",
+    "compile": "ts-node src/index.ts && tsc"
   },
   "keywords": [],
   "author": "",
