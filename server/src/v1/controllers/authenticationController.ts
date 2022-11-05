@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { getUser, postUser } from '../services/authenticationService';
+import { getUser, postUser } from '../services/userService';
 import { invalidCredentials } from '../models/entities/customError';
 
 export async function signup(req: Request, res: Response, next: NextFunction) {

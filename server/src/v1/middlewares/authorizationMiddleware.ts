@@ -5,7 +5,8 @@ import { AuthToken } from '../models/entities/authToken';
 import { invalidAuthToken, invalidUserRole, noAuthHeader } from '../models/entities/customError';
 
 export function authenticateToken(req: Request, res: Response, next: NextFunction) {
-  const token = req.headers['authorization'];
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
   if (token == null) {
     next(noAuthHeader);
     return;
