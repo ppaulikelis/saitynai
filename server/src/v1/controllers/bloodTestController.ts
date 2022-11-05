@@ -14,8 +14,8 @@ export async function getAll(req: Request, res: Response, next: NextFunction) {
       Number(req.query.page),
       Number(req.query.count),
       Number(req.params.medicalCardId),
-      1
-    ); //TODO: pass user id instead of 1
+      req.authToken.id
+    );
     if (bloodTests.length == 0) {
       next(resourcesNotFound);
     } else {
@@ -37,7 +37,11 @@ export async function post(req: Request, res: Response, next: NextFunction) {
 
 export async function get(req: Request, res: Response, next: NextFunction) {
   try {
-    const bloodTest = await getBloodTest(Number(req.params.bloodTestId), Number(req.params.medicalCardId), 1); //TODO: pass user id instead of 1
+    const bloodTest = await getBloodTest(
+      Number(req.params.bloodTestId),
+      Number(req.params.medicalCardId),
+      req.authToken.id
+    );
     if (bloodTest == null) {
       next(resourceNotFound);
     } else {

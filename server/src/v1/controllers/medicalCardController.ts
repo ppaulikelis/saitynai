@@ -10,7 +10,7 @@ import {
 
 export async function getAll(req: Request, res: Response, next: NextFunction) {
   try {
-    const medicalCards = await getMedicalCards(Number(req.query.page), Number(req.query.count), 1); //TODO: pass user id instead of 1
+    const medicalCards = await getMedicalCards(Number(req.query.page), Number(req.query.count), req.authToken.id);
     if (medicalCards.length == 0) {
       next(resourcesNotFound);
     } else {
@@ -23,7 +23,7 @@ export async function getAll(req: Request, res: Response, next: NextFunction) {
 
 export async function post(req: Request, res: Response, next: NextFunction) {
   try {
-    const medicalCard = await postMedicalCard({ ...req.body, userId: 1 }); //TODO: pass user id instead of 1
+    const medicalCard = await postMedicalCard({ ...req.body, userId: req.authToken.id });
     res.status(201).json(medicalCard);
   } catch (error: any) {
     next(error);
@@ -32,7 +32,7 @@ export async function post(req: Request, res: Response, next: NextFunction) {
 
 export async function get(req: Request, res: Response, next: NextFunction) {
   try {
-    const medicalCard = await getMedicalCard(Number(req.params.medicalCardId), 1); //TODO: pass user id instead of 1
+    const medicalCard = await getMedicalCard(Number(req.params.medicalCardId), req.authToken.id);
     if (medicalCard == null) {
       next(resourceNotFound);
     } else {

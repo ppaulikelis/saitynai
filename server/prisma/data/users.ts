@@ -3,27 +3,27 @@ import { Role } from '@prisma/client';
 export const users = [
   {
     email: 'user1@gmail.com',
-    password: '$2a$12$9GakqyJUygjQZO0wvM3Nv.LFl8pve87hY08agj1vH8ARCVl/DNnTm',
+    password: '$2b$12$8YBMf2OxEbG/QpXHLQ9WmOoCxLyEAFPffWOP0xDUi3TnUSBGdxNo2',
     role: Role.USER,
   },
   {
     email: 'user2@gmail.com',
-    password: '$2a$12$lLWeyuPc3pWj.42cwPiPLuBRXVUrZQCppnowZVttSMoO44PWVUwZS',
+    password: '$2b$12$ZsixHtdeo5EFhgoARGBg6uQ9f7ZwE1/YIKimMXFijjInstntri55K',
     role: Role.USER,
   },
   {
     email: 'editor1@gmail.com',
-    password: '$2a$12$khrXwgCB3zYfjxpXh5oUgubLyzdRYnew2e8oVUuFmfwnhLqLyv.uK',
+    password: '$2b$12$86iDoksH/6/vnRSl5tj09u1Q6q/sZxLGF3mVBpjDLhBrap9qFUR8.',
     role: Role.EDITOR,
   },
   {
     email: 'editor2@gmail.com',
-    password: '$2a$12$MMTqTO6/LjV/aKZC2X3Y3OM/B57M0YZw/x3YSkzjE3xYADWviwQ2y',
+    password: '$2b$12$6hzpp/VT6F62JgEMtYYijOkJC9jJRrjXGj0iFe4ohI4PP6lbmNvw2',
     role: Role.EDITOR,
   },
   {
     email: 'admin@gmail.com',
-    password: '$2a$12$HGW3APZRdjnUUqKsPmXcM.4yg8vk.gGPHONt8mYlR81Fw1q8wphYW',
+    password: '$2b$12$e0RoBaM8mkl80wo2DK2uYuJcKuum587xI27p5vbURpcEETAtvxB3C',
     role: Role.ADMIN,
   },
 ];

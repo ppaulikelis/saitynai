@@ -15,8 +15,8 @@ export async function getAll(req: Request, res: Response, next: NextFunction) {
       Number(req.query.count),
       Number(req.params.bloodTestId),
       Number(req.params.medicalCardId),
-      1
-    ); //TODO: pass user id instead of 1
+      req.authToken.id
+    );
     if (bloodTestAnalytes.length == 0) {
       next(resourcesNotFound);
     } else {
@@ -42,8 +42,8 @@ export async function get(req: Request, res: Response, next: NextFunction) {
       Number(req.params.bloodTestAnalyteId),
       Number(req.params.bloodTestId),
       Number(req.params.medicalCardId),
-      1
-    ); //TODO: pass user id instead of 1
+      req.authToken.id
+    );
     if (bloodTestAnalyte == null) {
       next(resourceNotFound);
     } else {
