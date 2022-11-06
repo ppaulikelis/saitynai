@@ -7,6 +7,7 @@
     "start": "node dist/src/index.js",
     "start:prod": "npm run build && node ./dist/src/index.js",
     "build": "npx tsc",
+    "build:render": "npm install && npm run build",
     "start:nodemon": "node ./node_modules/nodemon/bin/nodemon.js",
     "compile": "ts-node src/index.ts && tsc"
   },
@@ -17,7 +18,7 @@
     "@prisma/client": "^4.4.0",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.2",
+    "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "joi": "^17.6.2",
     "jsonwebtoken": "^8.5.1"
