@@ -20,6 +20,5 @@ export function errorResponder(error: CustomError, request: Request, response: R
   response.status(status).json({
     status,
     message: shortMsg,
-    fullMessage: error.message,
   });
 }

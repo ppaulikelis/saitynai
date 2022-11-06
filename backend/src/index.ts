@@ -39,6 +39,4 @@ app.use(errorResponder);
 //const port = 3000;
 app.listen(process.env.PORT, () => {
   console.log(`Server is running`);
-  console.log(process.env.PORT);
-  console.log(process.env.DATABASE_URL);
 });
