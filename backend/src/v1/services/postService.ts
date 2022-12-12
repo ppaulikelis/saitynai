@@ -5,6 +5,11 @@ const prisma = new PrismaClient();
 export async function getPosts(page: number, count: number) {
   const { skip, take } = handleListQuery(page, count);
   const posts = await prisma.post.findMany({
+    orderBy: [
+      {
+        date: 'desc',
+      },
+    ],
     skip: skip,
     take: take,
   });

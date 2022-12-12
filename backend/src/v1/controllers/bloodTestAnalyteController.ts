@@ -18,7 +18,7 @@ export async function getAll(req: Request, res: Response, next: NextFunction) {
       req.authToken.id
     );
     if (bloodTestAnalytes.length == 0) {
-      next(resourcesNotFound);
+      res.status(200).json([]);
     } else {
       res.status(200).json(bloodTestAnalytes);
     }

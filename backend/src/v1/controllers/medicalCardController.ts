@@ -12,7 +12,7 @@ export async function getAll(req: Request, res: Response, next: NextFunction) {
   try {
     const medicalCards = await getMedicalCards(Number(req.query.page), Number(req.query.count), req.authToken.id);
     if (medicalCards.length == 0) {
-      next(resourcesNotFound);
+      res.status(200).json([]);
     } else {
       res.status(200).json(medicalCards);
     }

@@ -9,7 +9,7 @@ export async function getAll(req: Request, res: Response, next: NextFunction) {
   try {
     const editors = await getUsers(Role.EDITOR);
     if (editors.length == 0) {
-      next(resourcesNotFound);
+      res.status(200).json([]);
     } else {
       res.status(200).json(editors);
     }

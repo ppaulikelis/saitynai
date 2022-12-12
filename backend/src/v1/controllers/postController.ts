@@ -6,7 +6,7 @@ export async function getAll(req: Request, res: Response, next: NextFunction) {
   try {
     const posts = await getPosts(Number(req.query.page), Number(req.query.count));
     if (posts.length == 0) {
-      next(resourcesNotFound);
+      res.status(200).json([]);
     } else {
       res.status(200).json(posts);
     }
