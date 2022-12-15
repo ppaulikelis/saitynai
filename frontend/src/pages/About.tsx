@@ -10,7 +10,7 @@ export default function About() {
 	return (
 		<PageContainer title="About us">
 			<Grid container spacing={2}>
-				<Grid lg={6} xs={12} sx={{ p: "10px" }}>
+				<Grid lg={6} xs={12}>
 					<Box p={5}>
 						<Typography
 							variant="h5"
@@ -32,7 +32,7 @@ export default function About() {
 						</Typography>
 					</Box>
 				</Grid>
-				<Grid lg={6} xs={12} sx={{ p: "10px" }}>
+				<Grid lg={6} xs={12}>
 					<Box display={"flex"} p={5} justifyContent="center">
 						<img
 							src={"/about1.jpg"}
