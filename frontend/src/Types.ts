@@ -20,14 +20,14 @@ export interface ErrorResponseType {
 }
 
 export interface PostType {
-	id: number;
+	id?: number;
 	title: string;
 	description: string;
-	date: Date;
+	date?: Date;
 	content: string;
-	editorId: number;
-	lastEditorId: number;
-	lastEditedDate: Date;
+	editorId?: number;
+	lastEditorId?: number;
+	lastEditedDate?: Date;
 }
 
 export interface GenderType {

@@ -19,7 +19,10 @@ import { AccountCircle } from "@mui/icons-material";
 function ResponsiveAppBar() {
 	const context = useContext(CurrentUserContext);
 	const navigate = useNavigate();
-	const pages = [{ title: "Blog", url: "/blog" }];
+	const pages = [
+		{ title: "About us", url: "/about" },
+		{ title: "Blog", url: "/blog" },
+	];
 	const settings = [
 		{
 			title: "Dashboard",

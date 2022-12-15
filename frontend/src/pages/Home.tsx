@@ -9,7 +9,7 @@ export default function Home() {
 	return (
 		<Box
 			sx={{
-				pt: 8,
+				pt: 10,
 				pb: 6,
 			}}
 		>
@@ -51,7 +51,9 @@ export default function Home() {
 					>
 						Get started
 					</Button>
-					<Button variant="outlined">About us</Button>
+					<Button variant="outlined" onClick={() => navigate("/about")}>
+						About us
+					</Button>
 				</Stack>
 			</Container>
 		</Box>

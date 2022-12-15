@@ -13,6 +13,10 @@ import SignUp from "../pages/SignUp";
 import { CurrentUserContext } from "./CurrentUserContext";
 import ProtectedRoute from "./ProtectedRoute";
 import Editors from "../pages/admin/Editors";
+import Posts from "../pages/editor/Posts";
+import AddPost from "../pages/editor/AddPost";
+import EditPost from "../pages/editor/EditPost";
+import About from "../pages/About";
 
 export default function Router() {
 	const context = useContext(CurrentUserContext);
@@ -21,6 +25,7 @@ export default function Router() {
 		<Routes>
 			{/* Public Routes */}
 			<Route path="/" element={<Home />} />
+			<Route path="/about" element={<About />} />
 			<Route path="/blog" element={<Blog />} />
 			<Route path="/blog/:postId" element={<BlogPost />} />
 			<Route
@@ -96,6 +101,46 @@ export default function Router() {
 						}
 						redirectPath="/"
 						outlet={<Editors />}
+					/>
+				}
+			/>
+			{/* Editor Routes */}
+			<Route
+				path="/editor/posts"
+				element={
+					<ProtectedRoute
+						isAllowed={
+							context?.isRegistered ||
+							(!!context?.user && context?.user.role === "EDITOR")
+						}
+						redirectPath="/"
+						outlet={<Posts />}
+					/>
+				}
+			/>
+			<Route
+				path="/editor/posts/add"
+				element={
+					<ProtectedRoute
+						isAllowed={
+							context?.isRegistered ||
+							(!!context?.user && context?.user.role === "EDITOR")
+						}
+						redirectPath="/"
+						outlet={<AddPost />}
+					/>
+				}
+			/>
+			<Route
+				path="/editor/posts/edit/:postId"
+				element={
+					<ProtectedRoute
+						isAllowed={
+							context?.isRegistered ||
+							(!!context?.user && context?.user.role === "EDITOR")
+						}
+						redirectPath="/"
+						outlet={<EditPost />}
 					/>
 				}
 			/>

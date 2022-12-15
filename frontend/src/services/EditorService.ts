@@ -1,5 +1,5 @@
 import axios from "axios";
-import { MedicalCardType, UserType } from "../Types";
+import { EditorType, MedicalCardType, UserType } from "../Types";
 import authHeader from "./AuthHeader";
 
 const API_URL = "http://localhost:8000/api/v1";
@@ -12,7 +12,7 @@ class EditorService {
 		return response.data;
 	}
 
-	async post(data: UserType) {
+	async post(data: EditorType) {
 		const response = await axios.post(API_URL + "/editors", data, {
 			headers: authHeader(),
 		});
