@@ -40,7 +40,7 @@ export default function About() {
 							loading="lazy"
 							style={{
 								height: "auto",
-								width: "auto",
+								width: "100%",
 								objectFit: "contain",
 								maxWidth: "750px",
 							}}
