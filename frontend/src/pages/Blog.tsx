@@ -58,7 +58,7 @@ function BlogPostCard({ post }: Props) {
 						{post.description}
 					</Typography>
 					<Typography variant="body2" color="text.secondary" align="right">
-						{new Date(post.date).toDateString()}
+						{new Date(post.date).toISOString().split("T")[0]}
 					</Typography>
 				</CardContent>
 			</CardActionArea>

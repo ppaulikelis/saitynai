@@ -22,7 +22,7 @@ export async function signin(req: Request, res: Response, next: NextFunction) {
     if (user) {
       if (await bcrypt.compare(password, user.password)) {
         const data = { id: user.id, email: user.email, role: user.role };
-        const accessToken = jwt.sign(data, String(process.env.ACCESS_TOKEN_SECRET), { expiresIn: 60 * 30 });
+        const accessToken = jwt.sign(data, String(process.env.ACCESS_TOKEN_SECRET), { expiresIn: 60 * 15 });
         res.status(200).json({ user: data, accessToken: accessToken });
       } else {
         next(invalidCredentials);

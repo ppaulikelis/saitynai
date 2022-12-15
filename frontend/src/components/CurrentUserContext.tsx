@@ -5,6 +5,7 @@ import { AxiosError, AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar, VariantType } from "notistack";
 import { Backdrop, CircularProgress } from "@mui/material";
+import UserService from "../services/UserService";
 
 interface Props {
 	children?: ReactNode;
@@ -12,22 +13,36 @@ interface Props {
 
 interface Value {
 	user: UserType | null;
+	isRegistered: boolean;
 	signIn: (data: SignInType) => void;
 	signUp: (data: SignUpType) => void;
-	logOut: () => void;
+	logOut: (logOutMessage?: string, variant?: VariantType) => void;
 }
 
 export const CurrentUserContext = createContext<Value | null>(null);
 
 export const CurrentUserProvider = ({ children }: Props) => {
 	const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+	const [isRegistered, setIsRegistered] = useState(true);
 	const navigate = useNavigate();
 	const { enqueueSnackbar } = useSnackbar();
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
-		const user = localStorage.getItem("currentUser");
-		if (user) setCurrentUser(JSON.parse(user));
+		const accessToken = localStorage.getItem("accessToken");
+		if (accessToken) {
+			UserService.get()
+				.then((response: AxiosResponse) => {
+					const user = response.data;
+					setIsRegistered(true);
+					setCurrentUser(user);
+				})
+				.catch((error: AxiosError) => {
+					logOut("Session expired", "warning");
+				});
+		} else {
+			setIsRegistered(false);
+		}
 	}, []);
 
 	const signIn = async (data: SignInType) => {
@@ -36,8 +51,8 @@ export const CurrentUserProvider = ({ children }: Props) => {
 			.then((response: AxiosResponse) => {
 				const user = response.data.user;
 				const accessToken = response.data.accessToken;
+				setIsRegistered(true);
 				setCurrentUser(user);
-				localStorage.setItem("currentUser", JSON.stringify(user));
 				localStorage.setItem("accessToken", accessToken);
 				setLoading(false);
 				enqueueSnackbar(`Welcome, ${user.email}`, { variant: "success" });
@@ -71,15 +86,16 @@ export const CurrentUserProvider = ({ children }: Props) => {
 		logOutMessage: string = "Logout successfull",
 		variant: VariantType = "success"
 	) => {
-		localStorage.removeItem("currentUser");
 		localStorage.removeItem("accessToken");
+		setIsRegistered(false);
 		setCurrentUser(null);
-		navigate("/signin");
+		navigate("/");
 		enqueueSnackbar(logOutMessage, { variant: variant });
 	};
 
 	const value: Value = {
 		user: currentUser,
+		isRegistered,
 		signIn,
 		signUp,
 		logOut,

@@ -1,5 +1,4 @@
 import { Alert, AlertTitle } from "@mui/material";
-import React from "react";
 
 interface Props {
 	message: string;

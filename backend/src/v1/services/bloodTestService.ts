@@ -5,6 +5,11 @@ const prisma = new PrismaClient();
 export async function getBloodTests(page: number, count: number, medicalCardId: number, userId: number) {
   const { skip, take } = handleListQuery(page, count);
   const bloodTests = await prisma.bloodTest.findMany({
+    orderBy: [
+      {
+        date: 'desc',
+      },
+    ],
     where: {
       medicalCardId: medicalCardId,
       medicalCard: {
@@ -18,6 +23,7 @@ export async function getBloodTests(page: number, count: number, medicalCardId: 
 }
 
 export async function postBloodTest(data: BloodTest) {
+  console.log(data);
   const bloodTest = await prisma.bloodTest.create({
     data: data,
   });

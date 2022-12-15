@@ -12,6 +12,7 @@ import { router as bloodTestAnalyteDescriptionRouterV1 } from './v1/routes/btaDe
 import { router as postRouterV1 } from './v1/routes/postRouter';
 import { router as authenticationRouterV1 } from './v1/routes/authenticationRouter';
 import { router as editorRouterV1 } from './v1/routes/editorRouter';
+import { router as userRouterV1 } from './v1/routes/userRouter';
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use(prefixV1, bloodTestAnalyteDescriptionRouterV1);
 app.use(prefixV1, postRouterV1);
 app.use(prefixV1, authenticationRouterV1);
 app.use(prefixV1, editorRouterV1);
+app.use(prefixV1, userRouterV1);
 
 //Error Middleware
 app.use('*', invalidPath);

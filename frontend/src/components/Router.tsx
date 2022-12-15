@@ -2,6 +2,8 @@ import { useContext } from "react";
 import { Route, Routes } from "react-router-dom";
 import Blog from "../pages/Blog";
 import BlogPost from "../pages/BlogPost";
+import BloodTestAnalytes from "../pages/BloodTestAnalytes";
+import BloodTests from "../pages/BloodTests";
 import Dashboard from "../pages/Dashboard";
 import Home from "../pages/Home";
 import MedicalCards from "../pages/MedicalCards";
@@ -47,9 +49,38 @@ export default function Router() {
 				path="/user/medicalcards"
 				element={
 					<ProtectedRoute
-						isAllowed={!!context?.user && context?.user.role === "USER"}
+						isAllowed={
+							context?.isRegistered ||
+							(!!context?.user && context?.user.role === "USER")
+						}
 						redirectPath="/"
 						outlet={<MedicalCards />}
+					/>
+				}
+			/>
+			<Route
+				path="/user/medicalcards/:medicalCardId/bloodtests"
+				element={
+					<ProtectedRoute
+						isAllowed={
+							context?.isRegistered ||
+							(!!context?.user && context?.user.role === "USER")
+						}
+						redirectPath="/"
+						outlet={<BloodTests />}
+					/>
+				}
+			/>
+			<Route
+				path="/user/medicalcards/:medicalCardId/bloodtests/:bloodTestId/bloodtestanalytes"
+				element={
+					<ProtectedRoute
+						isAllowed={
+							context?.isRegistered ||
+							(!!context?.user && context?.user.role === "USER")
+						}
+						redirectPath="/"
+						outlet={<BloodTestAnalytes />}
 					/>
 				}
 			/>

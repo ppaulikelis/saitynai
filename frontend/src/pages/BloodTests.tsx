@@ -14,7 +14,12 @@ import {
 import MedicalCardService from "../services/MedicalCardService";
 import LoadingScreen from "../components/LoadingScreen";
 import { AxiosError } from "axios";
-import { ErrorResponseType, GenderType, MedicalCardType } from "../Types";
+import {
+	BloodTestType,
+	ErrorResponseType,
+	GenderType,
+	MedicalCardType,
+} from "../Types";
 import ErrorAlert from "../components/ErrorAlert";
 import { EnumsContext } from "../components/EnumsContext";
 import { ChangeEvent, useContext, useEffect, useState } from "react";
@@ -37,10 +42,12 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useSnackbar } from "notistack";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CurrentUserContext } from "../components/CurrentUserContext";
+import BloodTestService from "../services/BloodTestService";
 
-export default function MedicalCards() {
+export default function BloodTests() {
+	let { medicalCardId } = useParams();
 	const userContext = useContext(CurrentUserContext);
 	const navigate = useNavigate();
 	const { enqueueSnackbar } = useSnackbar();
@@ -68,15 +75,16 @@ export default function MedicalCards() {
 
 	const queryClient = useQueryClient();
 	const { isLoading, error, data } = useQuery(
-		"medicalCards",
-		MedicalCardService.getAll
+		["bloodTests", medicalCardId],
+		() =>
+			BloodTestService.getAll(parseInt(medicalCardId ? medicalCardId : "-1"))
 	);
 
-	const addMutation = useMutation(MedicalCardService.post, {
+	const addMutation = useMutation(BloodTestService.post, {
 		onSuccess: () => {
-			queryClient.invalidateQueries("medicalCards");
+			queryClient.invalidateQueries("bloodTests");
 			handleCloseAddModal();
-			enqueueSnackbar("Medical card added", { variant: "success" });
+			enqueueSnackbar("Blood test added", { variant: "success" });
 		},
 		onError(error: AxiosError, variables, context) {
 			const castedError = error as AxiosError;
@@ -89,11 +97,11 @@ export default function MedicalCards() {
 		},
 	});
 
-	const deleteMutation = useMutation(MedicalCardService.delete, {
+	const deleteMutation = useMutation(BloodTestService.delete, {
 		onSuccess: () => {
-			queryClient.invalidateQueries("medicalCards");
+			queryClient.invalidateQueries("bloodTests");
 			handleCloseDeleteModal();
-			enqueueSnackbar("Medical card deleted", { variant: "success" });
+			enqueueSnackbar("Blood test deleted", { variant: "success" });
 		},
 		onError(error: AxiosError, variables, context) {
 			const castedError = error as AxiosError;
@@ -106,11 +114,11 @@ export default function MedicalCards() {
 		},
 	});
 
-	const updateMutation = useMutation(MedicalCardService.update, {
+	const updateMutation = useMutation(BloodTestService.update, {
 		onSuccess: () => {
-			queryClient.invalidateQueries("medicalCards");
+			queryClient.invalidateQueries("bloodTests");
 			handleCloseUpdateModal();
-			enqueueSnackbar("Medical card updated", { variant: "success" });
+			enqueueSnackbar("Blood test updated", { variant: "success" });
 		},
 		onError(error: AxiosError, variables, context) {
 			const castedError = error as AxiosError;
@@ -144,43 +152,35 @@ export default function MedicalCards() {
 					<Table sx={{ minWidth: 650 }} aria-label="simple table">
 						<TableHead>
 							<TableRow>
-								<TableCell>Name</TableCell>
-								<TableCell>Surname</TableCell>
-								<TableCell>Gender</TableCell>
-								<TableCell>Age</TableCell>
+								<TableCell>Date</TableCell>
 								<TableCell align="right">Actions</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{data.map((medicalCard: MedicalCardType) => (
+							{data.map((bloodTest: BloodTestType) => (
 								<TableRow
-									key={medicalCard.id}
+									key={bloodTest.id}
 									sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
 								>
 									<TableCell component="th" scope="row">
-										{medicalCard.name}
+										{new Date(bloodTest.date).toISOString().split("T")[0]}
 									</TableCell>
-									<TableCell component="th" scope="row">
-										{medicalCard.surname}
-									</TableCell>
-									<TableCell>
-										{enums?.getGender(medicalCard.genderId).name}
-									</TableCell>
-									<TableCell>{getAge(medicalCard.birthDate)}</TableCell>
 									<TableCell align="right">
 										<ButtonGroup
 											variant="contained"
 											aria-label="outlined primary button group"
 										>
 											<Button
-												onClick={() => navigate(`${medicalCard.id}/bloodtests`)}
+												onClick={() =>
+													navigate(`${bloodTest.id}/bloodtestanalytes`)
+												}
 											>
 												View
 											</Button>
 											<Button
 												onClick={() =>
 													handleOpenUpdateModal(
-														medicalCard.id ? medicalCard.id : -1
+														bloodTest.id ? bloodTest.id : -1
 													)
 												}
 											>
@@ -189,7 +189,7 @@ export default function MedicalCards() {
 											<Button
 												onClick={() =>
 													handleOpenDeleteModal(
-														medicalCard.id ? medicalCard.id : -1
+														bloodTest.id ? bloodTest.id : -1
 													)
 												}
 											>
@@ -205,21 +205,22 @@ export default function MedicalCards() {
 				<AddForm
 					openAddModal={openAddModal}
 					handleCloseAddModal={handleCloseAddModal}
-					genders={enums?.genders}
 					addMutation={addMutation}
+					medicalCardId={medicalCardId}
 				/>
 				<DeleteForm
 					openDeleteModal={openDeleteModal}
 					handleCloseDeleteModal={handleCloseDeleteModal}
 					selected={selected}
+					medicalCardId={parseInt(medicalCardId ? medicalCardId : "-1")}
 					deleteMutation={deleteMutation}
 				/>
 				<UpdateForm
 					openUpdateModal={openUpdateModal}
 					handleCloseUpdateModal={handleCloseUpdateModal}
-					genders={enums?.genders}
 					selected={selected}
 					data={data}
+					medicalCardId={parseInt(medicalCardId ? medicalCardId : "-1")}
 					updateMutation={updateMutation}
 				/>
 			</>
@@ -227,47 +228,35 @@ export default function MedicalCards() {
 	};
 
 	return userContext?.user ? (
-		<PageContainer title="Medical Cards">{render()}</PageContainer>
+		<PageContainer title="Blood Tests">{render()}</PageContainer>
 	) : (
 		<></>
 	);
 }
 
-function getAge(dateString: string) {
-	var today = new Date();
-	var birthDate = new Date(dateString);
-	var age = today.getFullYear() - birthDate.getFullYear();
-	var m = today.getMonth() - birthDate.getMonth();
-	if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-		age--;
-	}
-	return age;
-}
-
 interface AddFormProps {
 	openAddModal: boolean;
 	handleCloseAddModal: () => void;
-	genders?: GenderType[];
-	addMutation: UseMutationResult<any, unknown, MedicalCardType, unknown>;
+	addMutation: UseMutationResult<
+		any,
+		AxiosError<unknown, any>,
+		BloodTestType,
+		unknown
+	>;
+	medicalCardId: string | undefined;
 }
 
 function AddForm({
 	openAddModal,
 	handleCloseAddModal,
-	genders,
 	addMutation,
+	medicalCardId,
 }: AddFormProps) {
-	const [currentGender, setGender] = useState(
-		genders ? genders[0].id.toString() : "1"
-	);
-
-	const handleGenderChange = (event: SelectChangeEvent) => {
-		setGender(event.target.value);
-	};
-
 	const [currentDate, setDate] = useState<string | null>(
 		new Date().toISOString()
 	);
+
+	console.log(currentDate);
 
 	const handleDateChange = (newValue: string | null) => {
 		setDate(new Date(newValue ? newValue : "").toISOString());
@@ -275,12 +264,9 @@ function AddForm({
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const data = new FormData(event.currentTarget);
 		addMutation.mutate({
-			name: data.get("name") as string,
-			surname: data.get("surname") as string,
-			genderId: parseInt(currentGender) as number,
-			birthDate: currentDate as string,
+			date: currentDate ? currentDate : new Date().toISOString(),
+			medicalCardId: parseInt(medicalCardId ? medicalCardId : "-1"),
 		});
 	};
 
@@ -293,51 +279,11 @@ function AddForm({
 					</Typography>
 				</DialogTitle>
 				<DialogContent sx={{ paddingX: "0px" }}>
-					<TextField
-						margin="normal"
-						required
-						fullWidth
-						id="name"
-						label="Name"
-						name="name"
-						autoComplete="name"
-						autoFocus
-					/>
-					<TextField
-						margin="normal"
-						required
-						fullWidth
-						id="surname"
-						label="Surname"
-						name="surname"
-						autoComplete="surname"
-						autoFocus
-					/>
-					<FormControl fullWidth margin="normal">
-						<InputLabel id="gender-select-label">Gender</InputLabel>
-						<Select
-							labelId="gender-select-label"
-							id="gender-select"
-							value={currentGender}
-							label="Gender"
-							name="gender"
-							onChange={handleGenderChange}
-							required
-						>
-							{genders?.map((gender: GenderType) => {
-								return (
-									<MenuItem key={gender.id} value={gender.id.toString()}>
-										{gender.name}
-									</MenuItem>
-								);
-							})}
-						</Select>
-					</FormControl>
 					<DatePicker
 						openTo="year"
 						views={["year", "month", "day"]}
 						maxDate={new Date().toDateString()}
-						label="Birthday"
+						label="Blood test date"
 						inputFormat="yyyy-MM-dd"
 						value={currentDate}
 						onChange={handleDateChange}
@@ -364,10 +310,14 @@ interface DeleteFormProps {
 	openDeleteModal: boolean;
 	handleCloseDeleteModal: () => void;
 	selected: number;
+	medicalCardId: number;
 	deleteMutation: UseMutationResult<
 		any,
 		AxiosError<unknown, any>,
-		number,
+		{
+			medicalCardId: number;
+			bloodTestId: number;
+		},
 		unknown
 	>;
 }
@@ -376,6 +326,7 @@ function DeleteForm({
 	openDeleteModal,
 	handleCloseDeleteModal,
 	selected,
+	medicalCardId,
 	deleteMutation,
 }: DeleteFormProps) {
 	return (
@@ -397,7 +348,11 @@ function DeleteForm({
 						aria-label="outlined primary button group"
 					>
 						<Button onClick={handleCloseDeleteModal}>Cancel</Button>
-						<Button onClick={() => deleteMutation.mutate(selected)}>
+						<Button
+							onClick={() =>
+								deleteMutation.mutate({ medicalCardId, bloodTestId: selected })
+							}
+						>
 							Delete
 						</Button>
 					</ButtonGroup>
@@ -410,15 +365,16 @@ function DeleteForm({
 interface UpdateFormProps {
 	openUpdateModal: boolean;
 	handleCloseUpdateModal: () => void;
-	genders?: GenderType[];
 	selected: number;
 	data: any;
+	medicalCardId: number;
 	updateMutation: UseMutationResult<
 		any,
 		AxiosError<unknown, any>,
 		{
-			id: number;
-			data: MedicalCardType;
+			medicalCardId: number;
+			bloodTestId: number;
+			data: BloodTestType;
 		},
 		unknown
 	>;
@@ -427,60 +383,35 @@ interface UpdateFormProps {
 function UpdateForm({
 	openUpdateModal,
 	handleCloseUpdateModal,
-	genders,
 	selected,
 	data,
+	medicalCardId,
 	updateMutation,
 }: UpdateFormProps) {
 	useEffect(() => {
-		const mc: MedicalCardType = data.find(
-			(mc: MedicalCardType) => mc.id === selected
+		const bt: BloodTestType = data.find(
+			(bt: BloodTestType) => bt.id === selected
 		);
-		if (mc) {
-			setName(mc.name);
-			setSurname(mc.surname ? mc.surname : "");
-			setGender(mc.genderId.toString());
-			setDate(new Date(mc.birthDate).toISOString());
+		if (bt) {
+			setDate(new Date(bt.date).toISOString());
 		}
 	}, [selected]);
 
-	const [currentName, setName] = useState("");
-
-	const handleNameChange = (
-		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-	) => {
-		setName(event.target.value);
-	};
-
-	const [currentSurname, setSurname] = useState("");
-
-	const handleSurnameChange = (
-		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-	) => {
-		setSurname(event.target.value);
-	};
-
-	const [currentGender, setGender] = useState("1");
-
-	const handleGenderChange = (event: SelectChangeEvent) => {
-		setGender(event.target.value);
-	};
-
-	const [currentDate, setDate] = useState<string | null>("");
+	const [currentDate, setDate] = useState<string | null>(
+		new Date().toISOString()
+	);
 
 	const handleDateChange = (newValue: string | null) => {
-		setDate(new Date(newValue ? newValue : "").toISOString());
+		setDate(new Date(newValue ? newValue : new Date()).toISOString());
 	};
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		updateMutation.mutate({
-			id: selected,
+			medicalCardId,
+			bloodTestId: selected,
 			data: {
-				name: currentName,
-				surname: currentSurname,
-				genderId: parseInt(currentGender) as number,
-				birthDate: currentDate as string,
+				date: currentDate ? currentDate : new Date().toISOString(),
 			},
 		});
 	};
@@ -494,50 +425,6 @@ function UpdateForm({
 					</Typography>
 				</DialogTitle>
 				<DialogContent sx={{ paddingX: "0px" }}>
-					<TextField
-						margin="normal"
-						required
-						fullWidth
-						id="name"
-						label="Name"
-						name="name"
-						autoComplete="name"
-						autoFocus
-						value={currentName}
-						onChange={(e) => handleNameChange(e)}
-					/>
-					<TextField
-						margin="normal"
-						required
-						fullWidth
-						id="surname"
-						label="Surname"
-						name="surname"
-						autoComplete="surname"
-						autoFocus
-						value={currentSurname}
-						onChange={(e) => handleSurnameChange(e)}
-					/>
-					<FormControl fullWidth margin="normal">
-						<InputLabel id="gender-select-label">Gender</InputLabel>
-						<Select
-							labelId="gender-select-label"
-							id="gender-select"
-							value={currentGender}
-							label="Gender"
-							name="gender"
-							onChange={handleGenderChange}
-							required
-						>
-							{genders?.map((gender: GenderType) => {
-								return (
-									<MenuItem key={gender.id} value={gender.id.toString()}>
-										{gender.name}
-									</MenuItem>
-								);
-							})}
-						</Select>
-					</FormControl>
 					<DatePicker
 						openTo="year"
 						views={["year", "month", "day"]}

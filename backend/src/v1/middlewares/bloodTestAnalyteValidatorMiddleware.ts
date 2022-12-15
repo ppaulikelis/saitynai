@@ -24,12 +24,14 @@ const schemaUpdate = async () => {
   const max = last[0].id;
   const schema = Joi.object({
     value: Joi.number(),
+    bloodTestAnalyteDescriptionId: Joi.number().min(1).max(max),
   });
   return schema;
 };
 
 export async function validatePost(req: Request, res: Response, next: NextFunction) {
   const data = req.body;
+  console.log(data);
   const schema = await schemaPost();
   const { error } = await schema.validate(data, { abortEarly: true });
   if (error) {

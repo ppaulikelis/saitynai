@@ -24,6 +24,7 @@ export function prismaErrorHandler(error: any, request: Request, response: Respo
     console.log('PrismaClientInitializationError');
     next(new CustomError(error.message));
   } else if (error instanceof Prisma.PrismaClientValidationError) {
+    console.log(error.message);
     console.log('PrismaClientValidationError');
     next(invalidRequest);
   } else {

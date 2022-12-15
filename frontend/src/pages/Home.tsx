@@ -44,7 +44,7 @@ export default function Home() {
 							if (!!context?.user) {
 								navigate("/dashboard");
 							} else {
-								navigate("/signup");
+								navigate("/signin");
 							}
 						}}
 						variant="contained"

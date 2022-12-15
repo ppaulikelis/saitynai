@@ -49,3 +49,16 @@ export interface MedicalCardType {
 	genderId: number;
 	birthDate: string;
 }
+
+export interface BloodTestType {
+	id?: number;
+	date: string;
+	medicalCardId?: number;
+}
+
+export interface BloodTestAnalyteType {
+	id?: number;
+	value: number;
+	bloodTestId?: number;
+	bloodTestAnalyteDescriptionId: number;
+}

@@ -14,7 +14,14 @@ import {
 import MedicalCardService from "../services/MedicalCardService";
 import LoadingScreen from "../components/LoadingScreen";
 import { AxiosError } from "axios";
-import { ErrorResponseType, GenderType, MedicalCardType } from "../Types";
+import {
+	BloodTestAnalyteType,
+	BloodTestType,
+	BtaDescriptionType,
+	ErrorResponseType,
+	GenderType,
+	MedicalCardType,
+} from "../Types";
 import ErrorAlert from "../components/ErrorAlert";
 import { EnumsContext } from "../components/EnumsContext";
 import { ChangeEvent, useContext, useEffect, useState } from "react";
@@ -37,10 +44,13 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useSnackbar } from "notistack";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CurrentUserContext } from "../components/CurrentUserContext";
+import BloodTestService from "../services/BloodTestService";
+import BloodTestAnalyteService from "../services/BloodTestAnalyteService";
 
-export default function MedicalCards() {
+export default function BloodTests() {
+	let { medicalCardId, bloodTestId } = useParams();
 	const userContext = useContext(CurrentUserContext);
 	const navigate = useNavigate();
 	const { enqueueSnackbar } = useSnackbar();
@@ -68,15 +78,19 @@ export default function MedicalCards() {
 
 	const queryClient = useQueryClient();
 	const { isLoading, error, data } = useQuery(
-		"medicalCards",
-		MedicalCardService.getAll
+		["bloodTestAnalytes", medicalCardId, bloodTestId],
+		() =>
+			BloodTestAnalyteService.getAll(
+				parseInt(medicalCardId ? medicalCardId : "-1"),
+				parseInt(bloodTestId ? bloodTestId : "-1")
+			)
 	);
 
-	const addMutation = useMutation(MedicalCardService.post, {
+	const addMutation = useMutation(BloodTestAnalyteService.post, {
 		onSuccess: () => {
-			queryClient.invalidateQueries("medicalCards");
+			queryClient.invalidateQueries("bloodTestAnalytes");
 			handleCloseAddModal();
-			enqueueSnackbar("Medical card added", { variant: "success" });
+			enqueueSnackbar("Blood test analyte added", { variant: "success" });
 		},
 		onError(error: AxiosError, variables, context) {
 			const castedError = error as AxiosError;
@@ -89,11 +103,11 @@ export default function MedicalCards() {
 		},
 	});
 
-	const deleteMutation = useMutation(MedicalCardService.delete, {
+	const deleteMutation = useMutation(BloodTestAnalyteService.delete, {
 		onSuccess: () => {
-			queryClient.invalidateQueries("medicalCards");
+			queryClient.invalidateQueries("bloodTestAnalytes");
 			handleCloseDeleteModal();
-			enqueueSnackbar("Medical card deleted", { variant: "success" });
+			enqueueSnackbar("Blood test analyte deleted", { variant: "success" });
 		},
 		onError(error: AxiosError, variables, context) {
 			const castedError = error as AxiosError;
@@ -106,11 +120,11 @@ export default function MedicalCards() {
 		},
 	});
 
-	const updateMutation = useMutation(MedicalCardService.update, {
+	const updateMutation = useMutation(BloodTestAnalyteService.update, {
 		onSuccess: () => {
-			queryClient.invalidateQueries("medicalCards");
+			queryClient.invalidateQueries("bloodTestAnalytes");
 			handleCloseUpdateModal();
-			enqueueSnackbar("Medical card updated", { variant: "success" });
+			enqueueSnackbar("Blood test analyte updated", { variant: "success" });
 		},
 		onError(error: AxiosError, variables, context) {
 			const castedError = error as AxiosError;
@@ -136,7 +150,18 @@ export default function MedicalCards() {
 		return (
 			<>
 				<Box sx={{ display: "flex", justifyContent: "flex-end" }} mb={2}>
-					<Button variant="contained" onClick={handleOpenAddModal}>
+					<Button
+						variant="contained"
+						onClick={() => {
+							if (
+								data.length <
+								(enums?.btaDescriptions ? enums?.btaDescriptions.length : 0)
+							)
+								handleOpenAddModal();
+							else
+								enqueueSnackbar("All analytes added", { variant: "warning" });
+						}}
+					>
 						Add
 					</Button>
 				</Box>
@@ -144,43 +169,44 @@ export default function MedicalCards() {
 					<Table sx={{ minWidth: 650 }} aria-label="simple table">
 						<TableHead>
 							<TableRow>
-								<TableCell>Name</TableCell>
-								<TableCell>Surname</TableCell>
-								<TableCell>Gender</TableCell>
-								<TableCell>Age</TableCell>
+								<TableCell>Analyte</TableCell>
+								<TableCell>Value</TableCell>
 								<TableCell align="right">Actions</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{data.map((medicalCard: MedicalCardType) => (
+							{data.map((bloodTestAnalyte: BloodTestAnalyteType) => (
 								<TableRow
-									key={medicalCard.id}
+									key={bloodTestAnalyte.id}
 									sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
 								>
 									<TableCell component="th" scope="row">
-										{medicalCard.name}
+										{`${
+											enums?.getBtaDescription(
+												bloodTestAnalyte.bloodTestAnalyteDescriptionId
+											).name
+										} (${
+											enums?.getBtaDescription(
+												bloodTestAnalyte.bloodTestAnalyteDescriptionId
+											).abbreviation
+										})`}
 									</TableCell>
 									<TableCell component="th" scope="row">
-										{medicalCard.surname}
+										{`${bloodTestAnalyte.value} ${
+											enums?.getBtaDescription(
+												bloodTestAnalyte.bloodTestAnalyteDescriptionId
+											).unit
+										}`}
 									</TableCell>
-									<TableCell>
-										{enums?.getGender(medicalCard.genderId).name}
-									</TableCell>
-									<TableCell>{getAge(medicalCard.birthDate)}</TableCell>
 									<TableCell align="right">
 										<ButtonGroup
 											variant="contained"
 											aria-label="outlined primary button group"
 										>
 											<Button
-												onClick={() => navigate(`${medicalCard.id}/bloodtests`)}
-											>
-												View
-											</Button>
-											<Button
 												onClick={() =>
 													handleOpenUpdateModal(
-														medicalCard.id ? medicalCard.id : -1
+														bloodTestAnalyte.id ? bloodTestAnalyte.id : -1
 													)
 												}
 											>
@@ -189,7 +215,7 @@ export default function MedicalCards() {
 											<Button
 												onClick={() =>
 													handleOpenDeleteModal(
-														medicalCard.id ? medicalCard.id : -1
+														bloodTestAnalyte.id ? bloodTestAnalyte.id : -1
 													)
 												}
 											>
@@ -205,82 +231,108 @@ export default function MedicalCards() {
 				<AddForm
 					openAddModal={openAddModal}
 					handleCloseAddModal={handleCloseAddModal}
-					genders={enums?.genders}
 					addMutation={addMutation}
+					medicalCardId={medicalCardId}
+					bloodTestId={bloodTestId}
+					btaDescriptions={enums?.btaDescriptions.filter(
+						(btad) =>
+							!data.some(
+								(d: BloodTestAnalyteType) =>
+									d.bloodTestAnalyteDescriptionId === btad.id
+							)
+					)}
 				/>
 				<DeleteForm
 					openDeleteModal={openDeleteModal}
 					handleCloseDeleteModal={handleCloseDeleteModal}
 					selected={selected}
+					medicalCardId={parseInt(medicalCardId ? medicalCardId : "-1")}
+					bloodTestId={parseInt(bloodTestId ? bloodTestId : "-1")}
 					deleteMutation={deleteMutation}
 				/>
 				<UpdateForm
 					openUpdateModal={openUpdateModal}
 					handleCloseUpdateModal={handleCloseUpdateModal}
-					genders={enums?.genders}
 					selected={selected}
 					data={data}
+					medicalCardId={parseInt(medicalCardId ? medicalCardId : "-1")}
+					bloodTestId={parseInt(bloodTestId ? bloodTestId : "-1")}
 					updateMutation={updateMutation}
+					btaDescriptions={enums?.btaDescriptions.filter(
+						(btad) =>
+							!data.some((d: BloodTestAnalyteType) => {
+								if (d.id === selected) {
+									return false;
+								}
+								return d.bloodTestAnalyteDescriptionId === btad.id;
+							})
+					)}
 				/>
 			</>
 		);
 	};
 
 	return userContext?.user ? (
-		<PageContainer title="Medical Cards">{render()}</PageContainer>
+		<PageContainer title="Blood Test Analytes">{render()}</PageContainer>
 	) : (
 		<></>
 	);
 }
 
-function getAge(dateString: string) {
-	var today = new Date();
-	var birthDate = new Date(dateString);
-	var age = today.getFullYear() - birthDate.getFullYear();
-	var m = today.getMonth() - birthDate.getMonth();
-	if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-		age--;
-	}
-	return age;
-}
-
 interface AddFormProps {
 	openAddModal: boolean;
 	handleCloseAddModal: () => void;
-	genders?: GenderType[];
-	addMutation: UseMutationResult<any, unknown, MedicalCardType, unknown>;
+	addMutation: UseMutationResult<
+		any,
+		AxiosError<unknown, any>,
+		{
+			medicalCardId: number;
+			bloodTestId: number;
+			data: BloodTestAnalyteType;
+		},
+		unknown
+	>;
+	medicalCardId: string | undefined;
+	bloodTestId: string | undefined;
+	btaDescriptions: BtaDescriptionType[] | undefined;
 }
 
 function AddForm({
 	openAddModal,
 	handleCloseAddModal,
-	genders,
 	addMutation,
+	medicalCardId,
+	bloodTestId,
+	btaDescriptions,
 }: AddFormProps) {
-	const [currentGender, setGender] = useState(
-		genders ? genders[0].id.toString() : "1"
+	useEffect(() => {
+		if (btaDescriptions) {
+			setDescription(
+				btaDescriptions[0] ? btaDescriptions[0].id.toString() : "1"
+			);
+		}
+	}, [btaDescriptions]);
+
+	const [currentDescription, setDescription] = useState(
+		btaDescriptions && btaDescriptions.length > 0
+			? btaDescriptions[0].id.toString()
+			: "1"
 	);
 
-	const handleGenderChange = (event: SelectChangeEvent) => {
-		setGender(event.target.value);
-	};
-
-	const [currentDate, setDate] = useState<string | null>(
-		new Date().toISOString()
-	);
-
-	const handleDateChange = (newValue: string | null) => {
-		setDate(new Date(newValue ? newValue : "").toISOString());
+	const handleDescriptionChange = (event: SelectChangeEvent) => {
+		setDescription(event.target.value);
 	};
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const data = new FormData(event.currentTarget);
 		addMutation.mutate({
-			name: data.get("name") as string,
-			surname: data.get("surname") as string,
-			genderId: parseInt(currentGender) as number,
-			birthDate: currentDate as string,
+			medicalCardId: parseInt(medicalCardId ? medicalCardId : "-1"),
+			bloodTestId: parseInt(bloodTestId ? bloodTestId : "-1"),
+			data: {
+				value: parseFloat(data.get("value") as string),
+				bloodTestAnalyteDescriptionId: parseInt(currentDescription),
+			},
 		});
 	};
 
@@ -289,61 +341,47 @@ function AddForm({
 			<Box component="form" onSubmit={handleSubmit} noValidate p={3}>
 				<DialogTitle sx={{ paddingX: "0px" }}>
 					<Typography variant="h4" component="div" align="center">
-						Add medical card
+						Add blood test analyte
 					</Typography>
 				</DialogTitle>
 				<DialogContent sx={{ paddingX: "0px" }}>
-					<TextField
-						margin="normal"
-						required
-						fullWidth
-						id="name"
-						label="Name"
-						name="name"
-						autoComplete="name"
-						autoFocus
-					/>
-					<TextField
-						margin="normal"
-						required
-						fullWidth
-						id="surname"
-						label="Surname"
-						name="surname"
-						autoComplete="surname"
-						autoFocus
-					/>
 					<FormControl fullWidth margin="normal">
-						<InputLabel id="gender-select-label">Gender</InputLabel>
+						<InputLabel id="description-select-label">Analyte</InputLabel>
 						<Select
-							labelId="gender-select-label"
-							id="gender-select"
-							value={currentGender}
-							label="Gender"
-							name="gender"
-							onChange={handleGenderChange}
+							labelId="description-select-label"
+							id="description-select"
+							value={currentDescription}
+							label="Analyte"
+							name="analyte"
+							onChange={handleDescriptionChange}
 							required
 						>
-							{genders?.map((gender: GenderType) => {
+							{btaDescriptions?.map((btaDescription: BtaDescriptionType) => {
 								return (
-									<MenuItem key={gender.id} value={gender.id.toString()}>
-										{gender.name}
+									<MenuItem
+										key={btaDescription.id}
+										value={btaDescription.id.toString()}
+									>
+										{btaDescription.name}
 									</MenuItem>
 								);
 							})}
 						</Select>
 					</FormControl>
-					<DatePicker
-						openTo="year"
-						views={["year", "month", "day"]}
-						maxDate={new Date().toDateString()}
-						label="Birthday"
-						inputFormat="yyyy-MM-dd"
-						value={currentDate}
-						onChange={handleDateChange}
-						renderInput={(params) => (
-							<TextField {...params} fullWidth margin="normal" />
-						)}
+					<TextField
+						margin="normal"
+						required
+						fullWidth
+						id="value"
+						name="value"
+						label="Value"
+						type="number"
+						autoFocus
+						defaultValue={"0"}
+						InputProps={{ inputProps: { min: 0, max: 9999, step: "0.1" } }}
+						InputLabelProps={{
+							shrink: true,
+						}}
 					/>
 				</DialogContent>
 				<DialogActions sx={{ paddingX: "0px" }}>
@@ -364,10 +402,16 @@ interface DeleteFormProps {
 	openDeleteModal: boolean;
 	handleCloseDeleteModal: () => void;
 	selected: number;
+	medicalCardId: number;
+	bloodTestId: number;
 	deleteMutation: UseMutationResult<
 		any,
 		AxiosError<unknown, any>,
-		number,
+		{
+			medicalCardId: number;
+			bloodTestId: number;
+			bloodTestAnalyteId: number;
+		},
 		unknown
 	>;
 }
@@ -376,6 +420,8 @@ function DeleteForm({
 	openDeleteModal,
 	handleCloseDeleteModal,
 	selected,
+	medicalCardId,
+	bloodTestId,
 	deleteMutation,
 }: DeleteFormProps) {
 	return (
@@ -397,7 +443,15 @@ function DeleteForm({
 						aria-label="outlined primary button group"
 					>
 						<Button onClick={handleCloseDeleteModal}>Cancel</Button>
-						<Button onClick={() => deleteMutation.mutate(selected)}>
+						<Button
+							onClick={() =>
+								deleteMutation.mutate({
+									medicalCardId,
+									bloodTestId,
+									bloodTestAnalyteId: selected ? selected : -1,
+								})
+							}
+						>
 							Delete
 						</Button>
 					</ButtonGroup>
@@ -410,77 +464,71 @@ function DeleteForm({
 interface UpdateFormProps {
 	openUpdateModal: boolean;
 	handleCloseUpdateModal: () => void;
-	genders?: GenderType[];
 	selected: number;
 	data: any;
+	medicalCardId: number;
+	bloodTestId: number;
 	updateMutation: UseMutationResult<
 		any,
 		AxiosError<unknown, any>,
 		{
-			id: number;
-			data: MedicalCardType;
+			medicalCardId: number;
+			bloodTestId: number;
+			bloodTestAnalyteId: number;
+			data: BloodTestAnalyteType;
 		},
 		unknown
 	>;
+	btaDescriptions: BtaDescriptionType[] | undefined;
 }
 
 function UpdateForm({
 	openUpdateModal,
 	handleCloseUpdateModal,
-	genders,
 	selected,
 	data,
+	medicalCardId,
+	bloodTestId,
 	updateMutation,
+	btaDescriptions,
 }: UpdateFormProps) {
 	useEffect(() => {
-		const mc: MedicalCardType = data.find(
-			(mc: MedicalCardType) => mc.id === selected
+		const bta: BloodTestAnalyteType = data.find(
+			(bta: BloodTestAnalyteType) => bta.id === selected
 		);
-		if (mc) {
-			setName(mc.name);
-			setSurname(mc.surname ? mc.surname : "");
-			setGender(mc.genderId.toString());
-			setDate(new Date(mc.birthDate).toISOString());
+		if (bta) {
+			setValue(bta.value);
+			setDescription(bta.bloodTestAnalyteDescriptionId.toString());
 		}
 	}, [selected]);
 
-	const [currentName, setName] = useState("");
+	const [currentDescription, setDescription] = useState(
+		btaDescriptions && btaDescriptions.length > 0
+			? btaDescriptions[0].id.toString()
+			: "1"
+	);
 
-	const handleNameChange = (
+	const handleDescriptionChange = (event: SelectChangeEvent) => {
+		setDescription(event.target.value);
+	};
+
+	const [currentValue, setValue] = useState(0);
+
+	const handleValueChange = (
 		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 	) => {
-		setName(event.target.value);
-	};
-
-	const [currentSurname, setSurname] = useState("");
-
-	const handleSurnameChange = (
-		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-	) => {
-		setSurname(event.target.value);
-	};
-
-	const [currentGender, setGender] = useState("1");
-
-	const handleGenderChange = (event: SelectChangeEvent) => {
-		setGender(event.target.value);
-	};
-
-	const [currentDate, setDate] = useState<string | null>("");
-
-	const handleDateChange = (newValue: string | null) => {
-		setDate(new Date(newValue ? newValue : "").toISOString());
+		setValue(parseFloat(event.target.value));
 	};
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		updateMutation.mutate({
-			id: selected,
+			medicalCardId,
+			bloodTestId,
+			bloodTestAnalyteId: selected,
 			data: {
-				name: currentName,
-				surname: currentSurname,
-				genderId: parseInt(currentGender) as number,
-				birthDate: currentDate as string,
+				value: currentValue,
+				bloodTestAnalyteDescriptionId: parseInt(currentDescription),
 			},
 		});
 	};
@@ -494,61 +542,44 @@ function UpdateForm({
 					</Typography>
 				</DialogTitle>
 				<DialogContent sx={{ paddingX: "0px" }}>
-					<TextField
-						margin="normal"
-						required
-						fullWidth
-						id="name"
-						label="Name"
-						name="name"
-						autoComplete="name"
-						autoFocus
-						value={currentName}
-						onChange={(e) => handleNameChange(e)}
-					/>
-					<TextField
-						margin="normal"
-						required
-						fullWidth
-						id="surname"
-						label="Surname"
-						name="surname"
-						autoComplete="surname"
-						autoFocus
-						value={currentSurname}
-						onChange={(e) => handleSurnameChange(e)}
-					/>
 					<FormControl fullWidth margin="normal">
-						<InputLabel id="gender-select-label">Gender</InputLabel>
+						<InputLabel id="description-select-label">Analyte</InputLabel>
 						<Select
-							labelId="gender-select-label"
-							id="gender-select"
-							value={currentGender}
-							label="Gender"
-							name="gender"
-							onChange={handleGenderChange}
+							labelId="description-select-label"
+							id="description-select"
+							value={currentDescription}
+							label="Analyte"
+							name="analyte"
+							onChange={handleDescriptionChange}
 							required
 						>
-							{genders?.map((gender: GenderType) => {
+							{btaDescriptions?.map((btaDescription: BtaDescriptionType) => {
 								return (
-									<MenuItem key={gender.id} value={gender.id.toString()}>
-										{gender.name}
+									<MenuItem
+										key={btaDescription.id}
+										value={btaDescription.id.toString()}
+									>
+										{btaDescription.name}
 									</MenuItem>
 								);
 							})}
 						</Select>
 					</FormControl>
-					<DatePicker
-						openTo="year"
-						views={["year", "month", "day"]}
-						maxDate={new Date().toDateString()}
-						label="Birthday"
-						inputFormat="yyyy-MM-dd"
-						value={currentDate}
-						onChange={handleDateChange}
-						renderInput={(params) => (
-							<TextField {...params} fullWidth margin="normal" />
-						)}
+					<TextField
+						margin="normal"
+						required
+						fullWidth
+						id="value"
+						name="value"
+						label="Value"
+						type="number"
+						autoFocus
+						value={currentValue}
+						InputProps={{ inputProps: { min: 0, max: 9999, step: "0.1" } }}
+						InputLabelProps={{
+							shrink: true,
+						}}
+						onChange={(e) => handleValueChange(e)}
 					/>
 				</DialogContent>
 				<DialogActions sx={{ paddingX: "0px" }}>

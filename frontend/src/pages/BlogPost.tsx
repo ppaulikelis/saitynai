@@ -39,7 +39,7 @@ export default function BlogPost() {
 						{data.description}
 					</Typography>
 					<Typography variant="body2" color="text.secondary" gutterBottom>
-						{new Date(data.date).toDateString()}
+						{new Date(data.date).toISOString().split("T")[0]}
 					</Typography>
 					<Typography align="justify" pt={4}>
 						{data.content}
