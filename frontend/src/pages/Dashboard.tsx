@@ -18,7 +18,7 @@ export default function Dashboard() {
 	}
 
 	if (context?.user.role === "ADMIN") {
-		return <Navigate to={"/user/editors"} replace />;
+		return <Navigate to={"/admin/editors"} replace />;
 	}
 
 	return <Navigate to={"/"} replace />;

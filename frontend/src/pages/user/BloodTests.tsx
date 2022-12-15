@@ -1,4 +1,4 @@
-import PageContainer from "../components/PageContainer";
+import PageContainer from "../../components/PageContainer";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -11,18 +11,12 @@ import {
 	useQuery,
 	useQueryClient,
 } from "react-query";
-import MedicalCardService from "../services/MedicalCardService";
-import LoadingScreen from "../components/LoadingScreen";
+import LoadingScreen from "../../components/LoadingScreen";
 import { AxiosError } from "axios";
-import {
-	BloodTestType,
-	ErrorResponseType,
-	GenderType,
-	MedicalCardType,
-} from "../Types";
-import ErrorAlert from "../components/ErrorAlert";
-import { EnumsContext } from "../components/EnumsContext";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { BloodTestType, ErrorResponseType } from "../../Types";
+import ErrorAlert from "../../components/ErrorAlert";
+import { EnumsContext } from "../../components/EnumsContext";
+import { useContext, useEffect, useState } from "react";
 import {
 	Box,
 	Button,
@@ -31,20 +25,15 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
-	FormControl,
-	InputLabel,
-	MenuItem,
 	Paper,
-	Select,
-	SelectChangeEvent,
 	TextField,
 	Typography,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useSnackbar } from "notistack";
 import { useNavigate, useParams } from "react-router-dom";
-import { CurrentUserContext } from "../components/CurrentUserContext";
-import BloodTestService from "../services/BloodTestService";
+import { CurrentUserContext } from "../../components/CurrentUserContext";
+import BloodTestService from "../../services/BloodTestService";
 
 export default function BloodTests() {
 	let { medicalCardId } = useParams();

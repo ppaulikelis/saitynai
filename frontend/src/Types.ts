@@ -62,3 +62,10 @@ export interface BloodTestAnalyteType {
 	bloodTestId?: number;
 	bloodTestAnalyteDescriptionId: number;
 }
+
+export interface EditorType {
+	id?: number;
+	email: string;
+	password: string;
+	role?: string;
+}
