@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
-import { invalidData } from '../models/entities/customError';
+import { invalidCredentials, invalidData } from '../models/entities/customError';
 
 const prisma = new PrismaClient();
 
@@ -22,7 +22,7 @@ export async function validate(req: Request, res: Response, next: NextFunction) 
   const newSchema = schema();
   const { error } = await newSchema.validate(data, { abortEarly: true });
   if (error) {
-    next(invalidData);
+    next(invalidCredentials);
   } else {
     next();
   }
