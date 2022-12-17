@@ -1210,6 +1210,6 @@ GET /blood-test-analyte-descriptions
 
 # Projekto išvados
 
-- Visi projekto uždaviniai sėkmingai įgyvendinti
+- Visi projekto uždaviniai sėkmingai įgyvendinti.
 - Pagilintos arba naujai įgytos žinios vartotojo sąsajos kūrime (angl. frontend), API kūrime, duomenų bazės projektavime ir kūrime, bei programos diegime debesijoje.
 - Įgyvendintas projektas leidžia išsaugoti savo ir savo artimųjų kraujo tyrimų rezultatus.
